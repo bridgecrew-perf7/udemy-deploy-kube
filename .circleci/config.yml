@@ -19,7 +19,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 20.10.6
-      - run: openssl aes-256-cbc -pbkdf2 -K $encrypt_key_1 -in service-account.json.circleci.enc -out ./service-account.json -d
+      - run: openssl aes-256-cbc -pbkdf2 -k $encrypt_key_1 -in service-account.json.circleci.enc -out ./service-account.json -d
       - run: curl https://sdk.cloud.google.com | bash > /dev/null;
       - run: source $HOME/google-cloud-sdk/path.bash.inc
       - run: gcloud components update kubectl

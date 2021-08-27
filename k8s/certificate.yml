@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wicochandra-xyz-tls
+spec:
+  secretName: wicochandra-xyz
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: wicochandra.xyz
+  dnsNames:
+    - wicochandra.xyz
+    - www.wicochandra.xyz

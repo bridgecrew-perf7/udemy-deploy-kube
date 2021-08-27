@@ -1,4 +1,6 @@
-sudo: required
+os: linux
+dist: xenial
+language: ruby
 services:
   - docker
 env:
@@ -25,4 +27,3 @@ deploy:
   script: bash ./deploy.sh
   on:
     branch: master
-

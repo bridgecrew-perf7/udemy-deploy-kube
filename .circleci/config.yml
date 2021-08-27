@@ -8,7 +8,6 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 20.10.6
-          docker_layer_caching: true
       - run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - run: docker build -t wicochandra/react-test -f ./client/Dockerfile.dev ./client
       - run: docker run -e CI=true wicochandra/react-test npm test
@@ -20,7 +19,6 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 20.10.6
-          docker_layer_caching: true
       - run: openssl aes-256-cbc -pbkdf2 -K $encrypt_key_1 -in service-account.json.circleci.enc -out ./service-account.json -d
       - run: curl https://sdk.cloud.google.com | bash > /dev/null;
       - run: source $HOME/google-cloud-sdk/path.bash.inc

@@ -18,9 +18,6 @@ jobs:
         auth:
           username: $DOCKER_USERNAME
           password: $DOCKER_PASSWORD
-    environment:
-      GIT_SHA: $(git rev-parse HEAD)
-      CLOUDSDK_CORE_DISABLE_PROMPTS: 1
     steps:
       - checkout
       - setup_remote_docker:
@@ -29,6 +26,7 @@ jobs:
           name: "Deploying to GKE"
           command: |
             GIT_SHA=$(git rev-parse HEAD)
+            CLOUDSDK_CORE_DISABLE_PROMPTS: 1
             openssl aes-256-cbc -pbkdf2 -k $encrypt_key_1 -in service-account.json.circleci.enc -out ./service-account.json -d
             curl https://sdk.cloud.google.com | bash > /dev/null;
             source $HOME/google-cloud-sdk/path.bash.inc
@@ -37,6 +35,7 @@ jobs:
             gcloud --quiet config set project udemy-k8s-324201
             gcloud --quiet config set compute/zone us-central1-c
             gcloud --quiet container clusters get-credentials my-first-cluster-1
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             ./deploy.sh
 
 workflows:

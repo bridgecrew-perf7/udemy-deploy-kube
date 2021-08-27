@@ -15,6 +15,9 @@ jobs:
   deploy:
     docker:
       - image: 'cimg/base:stable'
+        auth:
+          username: $DOCKER_USERNAME
+          password: $DOCKER_PASSWORD
     environment:
       GIT_SHA: $(git rev-parse HEAD)
       CLOUDSDK_CORE_DISABLE_PROMPTS: 1
@@ -24,13 +27,12 @@ jobs:
           version: 20.10.6
       - run: openssl aes-256-cbc -pbkdf2 -k $encrypt_key_1 -in service-account.json.circleci.enc -out ./service-account.json -d
       - run: curl https://sdk.cloud.google.com | bash > /dev/null;
-      - run: source $HOME/google-cloud-sdk/path.bash.inc && gcloud components update kubectl
-      - run: gcloud auth activate-service-account --key-file service-account.json
-      - run: gcloud config set project udemy-k8s-324201
-      - run: gcloud config set compute/zone us-central1-c
-      - run: gcloud container clusters get-credentials my-first-cluster-1
-      - run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - run: ./deploy.sh
+      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet components update kubectl
+      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet auth activate-service-account --key-file service-account.json
+      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet config set project udemy-k8s-324201
+      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet config set compute/zone us-central1-c
+      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet container clusters get-credentials my-first-cluster-1
+      - run: source $HOME/google-cloud-sdk/path.bash.inc && ./deploy.sh
 
 workflows:
   version: 2

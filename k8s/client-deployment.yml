@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: client
-          image: wicochandra/udemy-deploy-multi-client:k8s
+          image: wicochandra/udemy-deploy-multi-client
           ports:
             - containerPort: 3000

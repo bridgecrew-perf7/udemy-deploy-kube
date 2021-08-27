@@ -25,14 +25,19 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 20.10.6
-      - run: openssl aes-256-cbc -pbkdf2 -k $encrypt_key_1 -in service-account.json.circleci.enc -out ./service-account.json -d
-      - run: curl https://sdk.cloud.google.com | bash > /dev/null;
-      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet components update kubectl
-      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet auth activate-service-account --key-file service-account.json
-      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet config set project udemy-k8s-324201
-      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet config set compute/zone us-central1-c
-      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet container clusters get-credentials my-first-cluster-1
-      - run: source $HOME/google-cloud-sdk/path.bash.inc && ./deploy.sh
+      - run: 
+          name: "Deploying to GKE"
+          command: |
+            GIT_SHA=$(git rev-parse HEAD)
+            openssl aes-256-cbc -pbkdf2 -k $encrypt_key_1 -in service-account.json.circleci.enc -out ./service-account.json -d
+            curl https://sdk.cloud.google.com | bash > /dev/null;
+            source $HOME/google-cloud-sdk/path.bash.inc
+            gcloud --quiet components update kubectl
+            gcloud --quiet auth activate-service-account --key-file service-account.json
+            gcloud --quiet config set project udemy-k8s-324201
+            gcloud --quiet config set compute/zone us-central1-c
+            gcloud --quiet container clusters get-credentials my-first-cluster-1
+            ./deploy.sh
 
 workflows:
   version: 2

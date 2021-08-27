@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: wicochandra/udemy-deploy-multi-server
+          image: wicochandra/udemy-multi-server
           ports:
             - containerPort: 5000
           env:

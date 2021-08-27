@@ -1,7 +1,5 @@
 # This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
 version: 2.1
-orbs:
-  gcp-gke: circleci/gcp-gke@0.1.0
 jobs:
   build:
     docker:
@@ -25,7 +23,8 @@ jobs:
       - setup_remote_docker:
           version: 20.10.6
       - run: openssl aes-256-cbc -pbkdf2 -k $encrypt_key_1 -in service-account.json.circleci.enc -out ./service-account.json -d
-      - gcp-gke/install
+      - run: curl https://sdk.cloud.google.com | bash > /dev/null;
+      - run: source $HOME/google-cloud-sdk/path.bash.inc && gcloud components update kubectl
       - run: gcloud auth activate-service-account --key-file service-account.json
       - run: gcloud config set project udemy-k8s-324201
       - run: gcloud config set compute/zone us-central1-c

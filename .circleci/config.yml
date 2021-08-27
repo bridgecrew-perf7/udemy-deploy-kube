@@ -7,6 +7,8 @@ jobs:
 
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.6
       - run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - run: docker build -t wicochandra/react-test -f ./client/Dockerfile.dev ./client
       - run: docker run -e CI=true wicochandra/react-test npm test

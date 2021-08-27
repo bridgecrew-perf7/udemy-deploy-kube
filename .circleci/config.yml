@@ -4,7 +4,6 @@ jobs:
   build:
     docker:
       - image: 'cimg/base:stable'
-
     steps:
       - checkout
       - setup_remote_docker:
@@ -12,3 +11,34 @@ jobs:
       - run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - run: docker build -t wicochandra/react-test -f ./client/Dockerfile.dev ./client
       - run: docker run -e CI=true wicochandra/react-test npm test
+
+  deploy:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.6
+      - run: openssl aes-256-cbc -K $encrypt_key_1 -in service-account.json.circleci.enc -out ./service-account.json -d
+      - run: curl https://sdk.cloud.google.com | bash > /dev/null;
+      - run: source $HOME/google-cloud-sdk/path.bash.inc
+      - run: gcloud components update kubectl
+      - run: gcloud auth activate-service-account --key-file service-account.json
+      - run: gcloud config set project udemy-k8s-324201
+      - run: gcloud config set compute/zone us-central1-c
+      - run: gcloud container clusters get-credentials my-first-cluster-1
+      - run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - run: ./deploy.sh
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs: 
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+          

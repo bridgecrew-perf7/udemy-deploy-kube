@@ -6,9 +6,17 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/use-regex: 'true'
     kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
+  tls:
+    - hosts:
+        - www.wicochandra.xyz
+        - wicochandra.xyz
+      secretName: wicochandra-xyz
   rules:
-  - http:
+  - host: wicochandra.xyz
+    http:
       paths:
         - path: /?(.*)
           pathType: Prefix
